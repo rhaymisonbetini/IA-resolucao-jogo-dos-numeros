@@ -1,47 +1,38 @@
 'use strict'
-const Matrix = require('./Matrix.js')
 
 class Tom {
 
     constructor() {
-        this.matrix = new Matrix()
     }
 
-    setNewMatrix(matrix) {
-        this.matrix = matrix;
+    moveObject(keyToMove, matrix) {
+        let nullPointer = this.findNullPointer(matrix);
+        let index = this.findIndex(keyToMove, matrix);
+        matrix[nullPointer.eixoY][nullPointer.eixoX] = keyToMove;
+        matrix[index.eixoY][index.eixoX] = null;
+        return matrix;
     }
 
-    moveObject(keyToMove) {
-        let index = this.findIndex(keyToMove);
-        let nullPointer = this.findNullPointer();
+    findNullPointer(matrix) {
 
-        this.matrix['matrix'][nullPointer.eixoY][nullPointer.eixoX] = keyToMove;
-        this.matrix['matrix'][index.eixoY][index.eixoX] = null;
-
-        console.log(this.matrix)
-
-    }
-
-    findNullPointer() {
         let eixoX;
         let eixoY;
         for (let i = 0; i < 3; i++) {
-            let x = this.matrix['matrix'][i];
+            let x = matrix[i];
             let nullPointer = x.indexOf(null)
-            if (nullPointer && nullPointer !== -1) {
+            if (nullPointer !== -1) {
                 eixoX = nullPointer;
                 eixoY = i;
-            }
+            }1
         }
-        let matrix = this.matrix;
-        return { eixoX, eixoY, matrix };
+        return { eixoX, eixoY };
     }
 
-    findIndex(element) {
+    findIndex(element, matrix) {
         let eixoX;
         let eixoY;
         for (let i = 0; i < 3; i++) {
-            let x = this.matrix['matrix'][i];
+            let x = matrix[i];
             let elementor = x.indexOf(element)
             if (elementor !== -1) {
                 eixoX = elementor;
@@ -49,6 +40,10 @@ class Tom {
             }
         }
         return { eixoX, eixoY };
+    }
+
+    verifiIfGameIsOver(matrix) {
+        return JSON.stringify(matrix[0]) == JSON.stringify([1, 2, 3])
     }
 
 }

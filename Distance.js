@@ -6,20 +6,28 @@ const DONTMOVE = 'DONTMOVE';
 
 class Distance {
 
-
     constructor() {
-        this.adjacents = new Tom()
     }
 
-    calculateCoust(left, right, up, down) {
+    setLastState(matrix) {
+        lastMatrixState = matrix;
+    }
+
+    getLasState() {
+        return lastMatrixState;
+    }
+
+    calculateCoust(left, right, up, down, matrix, lastState) {
+
+        this.adjacents = new Tom()
 
         let distanceObjects = Object.create({ left: null, right: null, up: null, down: null })
         let objectsToMove = Object.create({ left: left, right: right, up: up, down: down })
 
-        let leftDistance = left ? this.adjacents.findIndex(left) : null;
-        let rightDistance = right ? this.adjacents.findIndex(right) : null;
-        let upDistance = up ? this.adjacents.findIndex(up) : null;
-        let dowtDistance = down ? this.adjacents.findIndex(down) : null;
+        let leftDistance = left ? this.adjacents.findIndex(left, matrix) : null;
+        let rightDistance = right ? this.adjacents.findIndex(right, matrix) : null;
+        let upDistance = up ? this.adjacents.findIndex(up, matrix) : null;
+        let dowtDistance = down ? this.adjacents.findIndex(down, matrix) : null;
 
 
         if (left) {
@@ -66,7 +74,9 @@ class Distance {
             }
         }
 
-        let distanceIfMoveObject = this.calculateDistanceIfMoveObjectToNullPointer(left, right, up, down)
+
+        let distanceIfMoveObject = this.calculateDistanceIfMoveObjectToNullPointer(left, right, up, down, matrix)
+
 
         let heuristic = {
             up: distanceObjects.up !== DONTMOVE ? distanceObjects.up + distanceIfMoveObject.up : DONTMOVE,
@@ -77,42 +87,70 @@ class Distance {
 
         let values = Object.values(heuristic)
         values = values.filter(function (item) {
-            return item !== DONTMOVE
+            return item !== DONTMOVE && item !== 0
         })
 
-        let keyToMove = this.keyForValue(heuristic, Math.min(...values));
-        
+        let keyToMove;
+
+        keyToMove = this.keyForValue(heuristic, Math.min(...values));
+
         return objectsToMove[keyToMove]
 
     }
 
-    calculateDistanceIfMoveObjectToNullPointer(left, right, up, down) {
+    calculateDistanceIfMoveObjectToNullPointer(left, right, up, down, matrix) {
 
         let distanceObjects = Object.create({ left: null, right: null, up: null, down: null })
 
-        let indexOfNullPointer = this.adjacents.findIndex(null);
+        let indexOfNullPointer = this.adjacents.findIndex(null, matrix);
+
+        let leftDistance = left ? this.adjacents.findIndex(left, matrix) : null;
+        let rightDistance = right ? this.adjacents.findIndex(right, matrix) : null;
+        let upDistance = up ? this.adjacents.findIndex(up, matrix) : null;
+        let dowtDistance = down ? this.adjacents.findIndex(down, matrix) : null;
+
 
         if (left) {
             let perfectPosition = this.perfectPosition(left);
             let euclidianDistance = this.distancia2d(indexOfNullPointer.eixoX, indexOfNullPointer.eixoY, perfectPosition[1], perfectPosition[0])
-            distanceObjects.left = euclidianDistance;
+            let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, leftDistance)
+            if (isPassiveToMove == MOVE) {
+                if (euclidianDistance) {
+                    distanceObjects.left = euclidianDistance;
+                }
+            }
         }
 
         if (right) {
             let perfectPosition = this.perfectPosition(right);
             let euclidianDistance = this.distancia2d(indexOfNullPointer.eixoX, indexOfNullPointer.eixoY, perfectPosition[1], perfectPosition[0])
-            distanceObjects.right = euclidianDistance;
+            let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, rightDistance)
+            if (isPassiveToMove == MOVE) {
+                if (euclidianDistance) {
+                    distanceObjects.right = euclidianDistance;
+                }
+            }
         }
 
         if (up) {
             let perfectPosition = this.perfectPosition(up);
             let euclidianDistance = this.distancia2d(indexOfNullPointer.eixoX, indexOfNullPointer.eixoY, perfectPosition[1], perfectPosition[0])
-            distanceObjects.up = euclidianDistance;
+            let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, upDistance)
+            if (isPassiveToMove == MOVE) {
+                if (euclidianDistance) {
+                    distanceObjects.up = euclidianDistance;
+                }
+            }
         }
         if (down) {
             let perfectPosition = this.perfectPosition(down);
             let euclidianDistance = this.distancia2d(indexOfNullPointer.eixoX, indexOfNullPointer.eixoY, perfectPosition[1], perfectPosition[0])
-            distanceObjects.down = euclidianDistance;
+            let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, dowtDistance)
+            if (isPassiveToMove == MOVE) {
+                if (euclidianDistance) {
+                    distanceObjects.down = euclidianDistance;
+                }
+            }
         }
 
         return distanceObjects;
