@@ -1,0 +1,23 @@
+{
+  "name": "robo_ia_resolucao_game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Adjacents.js",
+  "dependencies": {
+    "file-system": "^2.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhaymisonbetini/IA-resolucao-jogo-dos-numeros.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rhaymisonbetini/IA-resolucao-jogo-dos-numeros/issues"
+  },
+  "homepage": "https://github.com/rhaymisonbetini/IA-resolucao-jogo-dos-numeros#readme"
+}

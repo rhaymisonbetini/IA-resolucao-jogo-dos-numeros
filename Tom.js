@@ -23,7 +23,7 @@ class Tom {
             if (nullPointer !== -1) {
                 eixoX = nullPointer;
                 eixoY = i;
-            }1
+            } 1
         }
         return { eixoX, eixoY };
     }

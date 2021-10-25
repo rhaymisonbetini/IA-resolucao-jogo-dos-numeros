@@ -16,7 +16,7 @@ class Matrix {
     }
 
     getMatrixCopy() {
-        return [...this.matrix];
+        return JSON.parse(JSON.stringify(this.matrix));
     }
 
     setMatrix(matrix) {

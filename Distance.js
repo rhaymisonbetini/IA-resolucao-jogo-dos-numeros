@@ -1,6 +1,8 @@
 'use stric'
 
 const Tom = require('./Tom.js')
+const FileSystem = require('./FileSystem.js')
+let fileSystem = new FileSystem();
 const MOVE = 'MOVE';
 const DONTMOVE = 'DONTMOVE';
 
@@ -17,85 +19,112 @@ class Distance {
         return lastMatrixState;
     }
 
-    calculateCoust(left, right, up, down, matrix, lastState) {
-
-        this.adjacents = new Tom()
-
-        let distanceObjects = Object.create({ left: null, right: null, up: null, down: null })
-        let objectsToMove = Object.create({ left: left, right: right, up: up, down: down })
-
-        let leftDistance = left ? this.adjacents.findIndex(left, matrix) : null;
-        let rightDistance = right ? this.adjacents.findIndex(right, matrix) : null;
-        let upDistance = up ? this.adjacents.findIndex(up, matrix) : null;
-        let dowtDistance = down ? this.adjacents.findIndex(down, matrix) : null;
+    async calculateCoust(left, right, up, down, matrix) {
+        return await new Promise(async (resolve, reject) => {
 
 
-        if (left) {
-            let perfectPosition = this.perfectPosition(left);
-            let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, leftDistance)
-            if (isPassiveToMove == MOVE) {
-                let euclidianDistance = this.distancia2d(leftDistance.eixoX, leftDistance.eixoY, perfectPosition[1], perfectPosition[0])
-                distanceObjects.left = euclidianDistance;
-            } else {
-                distanceObjects.up = DONTMOVE
-            }
-        }
+            this.adjacents = new Tom()
 
-        if (right) {
-            let perfectPosition = this.perfectPosition(right);
-            let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, rightDistance)
-            if (isPassiveToMove == MOVE) {
-                let euclidianDistance = this.distancia2d(rightDistance.eixoX, rightDistance.eixoY, perfectPosition[1], perfectPosition[0])
-                distanceObjects.right = euclidianDistance;
-            } else {
-                distanceObjects.up = DONTMOVE
-            }
-        }
+            let distanceObjects = Object.create({ left: null, right: null, up: null, down: null })
+            let objectsToMove = Object.create({ left: left, right: right, up: up, down: down })
 
-        if (up) {
-            let perfectPosition = this.perfectPosition(up);
-            let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, upDistance)
-            if (isPassiveToMove == MOVE) {
-                let euclidianDistance = this.distancia2d(upDistance.eixoX, upDistance.eixoY, perfectPosition[1], perfectPosition[0])
-                distanceObjects.up = euclidianDistance;
-            } else {
-                distanceObjects.up = DONTMOVE
+            let leftDistance = left ? this.adjacents.findIndex(left, matrix) : null;
+            let rightDistance = right ? this.adjacents.findIndex(right, matrix) : null;
+            let upDistance = up ? this.adjacents.findIndex(up, matrix) : null;
+            let dowtDistance = down ? this.adjacents.findIndex(down, matrix) : null;
+
+
+            if (left) {
+                let perfectPosition = this.perfectPosition(left);
+                let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, leftDistance)
+                if (isPassiveToMove == MOVE) {
+                    let euclidianDistance = this.distancia2d(leftDistance.eixoX, leftDistance.eixoY, perfectPosition[1], perfectPosition[0])
+                    distanceObjects.left = euclidianDistance;
+                } else {
+                    distanceObjects.up = DONTMOVE
+                }
             }
 
-        }
-        if (down) {
-            let perfectPosition = this.perfectPosition(down);
-            let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, dowtDistance)
-            if (isPassiveToMove == MOVE) {
-                let euclidianDistance = this.distancia2d(dowtDistance.eixoX, dowtDistance.eixoY, perfectPosition[1], perfectPosition[0])
-                distanceObjects.down = euclidianDistance;
-            } else {
-                distanceObjects.up = DONTMOVE
+            if (right) {
+                let perfectPosition = this.perfectPosition(right);
+                let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, rightDistance)
+                if (isPassiveToMove == MOVE) {
+                    let euclidianDistance = this.distancia2d(rightDistance.eixoX, rightDistance.eixoY, perfectPosition[1], perfectPosition[0])
+                    distanceObjects.right = euclidianDistance;
+                } else {
+                    distanceObjects.up = DONTMOVE
+                }
             }
-        }
+
+            if (up) {
+                let perfectPosition = this.perfectPosition(up);
+                let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, upDistance)
+                if (isPassiveToMove == MOVE) {
+                    let euclidianDistance = this.distancia2d(upDistance.eixoX, upDistance.eixoY, perfectPosition[1], perfectPosition[0])
+                    distanceObjects.up = euclidianDistance;
+                } else {
+                    distanceObjects.up = DONTMOVE
+                }
+
+            }
+            if (down) {
+                let perfectPosition = this.perfectPosition(down);
+                let isPassiveToMove = this.verifyIfIsInCorrectPosition(perfectPosition, dowtDistance)
+                if (isPassiveToMove == MOVE) {
+                    let euclidianDistance = this.distancia2d(dowtDistance.eixoX, dowtDistance.eixoY, perfectPosition[1], perfectPosition[0])
+                    distanceObjects.down = euclidianDistance;
+                } else {
+                    distanceObjects.up = DONTMOVE
+                }
+            }
 
 
-        let distanceIfMoveObject = this.calculateDistanceIfMoveObjectToNullPointer(left, right, up, down, matrix)
+            let distanceIfMoveObject = this.calculateDistanceIfMoveObjectToNullPointer(left, right, up, down, matrix)
 
 
-        let heuristic = {
-            up: distanceObjects.up !== DONTMOVE ? distanceObjects.up + distanceIfMoveObject.up : DONTMOVE,
-            down: distanceObjects.down !== DONTMOVE ? distanceObjects.down + distanceIfMoveObject.down : DONTMOVE,
-            right: distanceObjects.right !== DONTMOVE ? distanceObjects.right + distanceIfMoveObject.right : DONTMOVE,
-            left: distanceObjects.left !== DONTMOVE ? distanceObjects.left + distanceIfMoveObject.left : DONTMOVE,
-        }
+            let heuristic = {
+                up: distanceObjects.up !== DONTMOVE ? distanceObjects.up + distanceIfMoveObject.up : DONTMOVE,
+                down: distanceObjects.down !== DONTMOVE ? distanceObjects.down + distanceIfMoveObject.down : DONTMOVE,
+                right: distanceObjects.right !== DONTMOVE ? distanceObjects.right + distanceIfMoveObject.right : DONTMOVE,
+                left: distanceObjects.left !== DONTMOVE ? distanceObjects.left + distanceIfMoveObject.left : DONTMOVE,
+            }
 
-        let values = Object.values(heuristic)
-        values = values.filter(function (item) {
-            return item !== DONTMOVE && item !== 0
+            let values = Object.values(heuristic)
+
+            values = values.filter(function (item) {
+                return item !== DONTMOVE && item !== 0
+            })
+
+            let keyToMove;
+
+            keyToMove = this.keyForValue(heuristic, Math.min(...values));
+
+            let p = this.adjacents.moveObject(objectsToMove[keyToMove], matrix)
+
+            let lastMatrix = await fileSystem.getLastMatric();
+
+            let verificator = false;
+
+            await lastMatrix.forEach((history) => {
+                if (JSON.stringify(history) == JSON.stringify(p)) {
+                    verificator = true;
+                    return;
+                }
+            })
+
+            console.log('values')
+            console.log(values)
+
+            if (!verificator) {
+                await fileSystem.createLastMatrix(matrix);
+                resolve(objectsToMove[keyToMove])
+            } else {
+                let reserve = values.sort()[1]
+                let newKeyTomove = this.keyForValueAndValuesSameDiferentsKey(heuristic, reserve, keyToMove)
+                await fileSystem.createLastMatrix(matrix);
+                resolve(objectsToMove[newKeyTomove])
+            }
         })
-
-        let keyToMove;
-
-        keyToMove = this.keyForValue(heuristic, Math.min(...values));
-
-        return objectsToMove[keyToMove]
-
     }
 
     calculateDistanceIfMoveObjectToNullPointer(left, right, up, down, matrix) {
@@ -182,6 +211,14 @@ class Distance {
     keyForValue(obj, val) {
         for (var chave in obj) {
             if (obj[chave] === val && obj.hasOwnProperty(chave)) {
+                return chave;
+            }
+        }
+    }
+
+    keyForValueAndValuesSameDiferentsKey(obj, val, dontMoveAgain) {
+        for (var chave in obj) {
+            if (obj[chave] === val && chave != dontMoveAgain && obj.hasOwnProperty(chave)) {
                 return chave;
             }
         }
